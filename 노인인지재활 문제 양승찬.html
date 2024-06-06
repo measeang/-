@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A-13</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        .meat-table th {
+            background-color: #ffe4e1;
+        }
+
+        .food-table th {
+            background-color: #90ee90;
+        }
+    </style>
+</head>
+<body>
+    <h1>정육점 가격표와 요리별 재료</h1>
+    <table id="meat" class="meat-table">
+        <tr>
+            <th>부위(100g)</th>
+            <th>가격</th>
+            <th>부위(100g)</th>
+            <th>가격</th>
+        </tr>
+        <tr>
+            <td>삼겹살</td>
+            <td>2700원</td>
+            <td>등심</td>
+            <td>7000원</td>
+        </tr>
+        <tr>
+            <td>목살</td>
+            <td>2800원</td>
+            <td>안심</td>
+            <td>13000원</td>
+        </tr>
+        <tr>
+            <td>앞다리살</td>
+            <td>1300원</td>
+            <td>양지</td>
+            <td>6000원</td>
+        </tr>
+    </table>
+    <table id="food" class="food-table">
+        <tr>
+            <th>요리</th>
+            <th>재료(1인분 기준)</th>
+        </tr>
+        <tr>
+            <td>돼지김치찜</td>
+            <td>목살 200g</td>
+        </tr>
+        <tr>
+            <td>소고기미역국</td>
+            <td>양지 50g</td>
+        </tr>
+        <tr>
+            <td>안심스테이크</td>
+            <td>안심 200g</td>
+        </tr>
+        <tr>
+            <td>등심스테이크</td>
+            <td>등심 200g</td>
+        </tr>
+    </table>
+
+    <div id="formContainer"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            createForm();
+        });
+
+        function createForm() {
+            const formContainer = document.getElementById('formContainer');
+
+            formContainer.appendChild(createQuestion('벙수 씨는 아내의 생일을 맞아 소고기미역국을 2인분 만들 계획입니다. 구매할 고기의 가격은 얼마인가요?', 'Seaweed'));
+            formContainer.appendChild(document.createElement('br'));
+
+            formContainer.appendChild(createQuestion('소민 씨는 집들이 음식으로 돼지김치찜 4인분을 준비하려 합니다. 구매할 고기의 가격은 얼마인가요?', 'Kimchi'));
+            formContainer.appendChild(document.createElement('br'));
+
+            formContainer.appendChild(createQuestion('나진 씨는 가족을 위해 등심스테이크 2인분과 안심스테이크 2인분을 준비하려 합니다. 구매할 고기의 가격은 얼마인가요?', 'Steak1', 'Steak2'));
+        }
+
+        function createQuestion(questionText, inputId1, inputId2 = null) {
+            const container = document.createElement('div');
+            container.className = 'question-container';
+
+            const question = document.createElement('p');
+            question.innerText = questionText;
+            container.appendChild(question);
+
+            const label1 = document.createElement('label');
+            label1.htmlFor = inputId1;
+            label1.innerText = inputId1 === 'Seaweed' ? '소고기미역국 인분 수: ' : inputId1 === 'Kimchi' ? '돼지김치찜 인분 수: ' : '등심스테이크 인분 수: ';
+
+            const input1 = document.createElement('input');
+            input1.type = 'number';
+            input1.id = inputId1;
+            input1.min = 1;
+            input1.value = 1;
+
+            container.appendChild(label1);
+            container.appendChild(input1);
+
+            if (inputId2) {
+                const label2 = document.createElement('label');
+                label2.htmlFor = inputId2;
+                label2.innerText = ' 안심스테이크 인분 수: ';
+
+                const input2 = document.createElement('input');
+                input2.type = 'number';
+                input2.id = inputId2;
+                input2.min = 1;
+                input2.value = 1;
+
+                container.appendChild(document.createElement('br'));
+                container.appendChild(label2);
+                container.appendChild(input2);
+            }
+
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.innerText = '계산하기';
+            button.onclick = () => calculateCost(inputId1, inputId2, container);
+
+            container.appendChild(document.createElement('br'));
+            container.appendChild(button);
+
+            const result = document.createElement('div');
+            result.className = 'result';
+            container.appendChild(result);
+
+            return container;
+        }
+
+        const prices = {
+            삼겹살: 2700,
+            목살: 2800,
+            앞다리살: 1300,
+            등심: 7000,
+            안심: 13000,
+            양지: 6000
+        };
+
+        const recipes = {
+            소고기미역국: { 양지: 50 },
+            돼지김치찜: { 목살: 200 },
+            안심스테이크: { 안심: 200 },
+            등심스테이크: { 등심: 200 }
+        };
+
+        function calculateCost(inputId1, inputId2 = null, container) {
+            const portions1 = document.getElementById(inputId1).value;
+            let cost1 = 0;
+            if (inputId1 === 'Seaweed') {
+                cost1 = (recipes.소고기미역국.양지 * portions1 / 100) * prices.양지;
+            } else if (inputId1 === 'Kimchi') {
+                cost1 = (recipes.돼지김치찜.목살 * portions1 / 100) * prices.목살;
+            } else if (inputId1 === 'Steak1') {
+                cost1 = (recipes.등심스테이크.등심 * portions1 / 100) * prices.등심;
+            }
+
+            let cost2 = 0;
+            if (inputId2) {
+                const portions2 = document.getElementById(inputId2).value;
+                if (inputId2 === 'Steak2') {
+                    cost2 = (recipes.안심스테이크.안심 * portions2 / 100) * prices.안심;
+                }
+            }
+
+            const totalCost = cost1 + cost2;
+
+            const resultDiv = container.querySelector('.result');
+            resultDiv.innerText = `총 가격: ${totalCost.toLocaleString()}원`;
+        }
+    </script>
+</body>
+</html>

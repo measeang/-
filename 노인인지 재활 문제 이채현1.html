@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>노인 인지 재활 문제</title>
+    <style>
+        * {
+            font-size: 16px;
+            font-family: Consolas, sans-serif;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div>
+        <h3>Q1. 오늘의 날짜와 날씨를 선택하세요</h3>
+    </div>
+    <form id="weatherForm">
+        <p><label for="date">날짜 선택:</label>
+        <input type="date" id="date" name="date"></p>
+        
+        <p><label for="region">지역 선택:</label>
+        <select id="region" name="region">
+            <option value="서울">서울</option>
+            <option value="인천">인천</option>
+            <option value="경기도">경기도</option>
+            <option value="강원도">강원도</option>
+            <option value="충청북도">충청북도</option>
+            <option value="충청남도">충청남도</option>
+            <option value="전라북도">전라북도</option>
+            <option value="전라남도">전라남도</option>
+            <option value="경상남도">경상남도</option>
+            <option value="경상북도">경상북도</option>
+            <option value="제주도">제주도</option>
+        </select></p>
+
+        <p><button type="button" onclick="realTimeWeather()">오늘 날씨</button></p>
+    </form>
+    <div class="weather-info">
+        <p class="weather-date"></p>
+        <p class="weather-temp"></p>
+        <p id="RN1"></p>
+        <p id="SKY"></p>
+        <p class="weather-state-text"></p>
+    </div>
+
+    <p><label for="weather">날씨 상태 선택:</label>
+        <select id="weather" name="weather">
+            <option value="맑음">맑음</option>
+            <option value="구름많음">구름많음</option>
+            <option value="흐림">흐림</option>
+            <option value="비">비</option>
+            <option value="비/눈">비/눈</option>
+            <option value="눈">눈</option>
+        </select>
+    </p>
+
+    <p><button type="button" onclick="moveToNextQuestion()">다음문제</button></p>
+
+    <script>
+        function realTimeWeather() {
+            var today = new Date();
+            var week = ['일','월','화','수','목','금','토'];
+            var year = today.getFullYear();
+            var month = today.getMonth() + 1;
+            var day = today.getDate();
+            var hours = today.getHours();
+            var minutes = today.getMinutes();
+
+            $('.weather-date').html(month + "월 " + day + "일 " + week[today.getDay()] + "요일");
+
+            if (minutes < 40) {
+                hours -= 1;
+                if (hours < 0) {
+                    today.setDate(today.getDate() - 1);
+                    day = today.getDate();
+                    month = today.getMonth() + 1;
+                    year = today.getFullYear();
+                    hours = 23;
+                }
+            }
+
+            if (hours < 10) {
+                hours = '0' + hours;
+            }
+            if (month < 10) {
+                month = '0' + month;
+            }
+            if (day < 10) {
+                day = '0' + day;
+            }
+
+            var formattedDate = year + '' + month + '' + day;
+
+            var region = $('#region').val();
+            var _nx, _ny;
+
+            switch (region) {
+                case '서울':
+                    _nx = 60; _ny = 127;
+                    break;
+                case '인천':
+                    _nx = 55; _ny = 124;
+                    break;
+                case '경기도':
+                    _nx = 60; _ny = 120;
+                    break;
+                case '강원도':
+                    _nx = 73; _ny = 134;
+                    break;
+                case '충청북도':
+                    _nx = 69; _ny = 107;
+                    break;
+                case '충청남도':
+                    _nx = 68; _ny = 100;
+                    break;
+                case '전라북도':
+                    _nx = 63; _ny = 89;
+                    break;
+                case '전라남도':
+                    _nx = 50; _ny = 67;
+                    break;
+                case '경상남도':
+                    _nx = 91; _ny = 77;
+                    break;
+                case '경상북도':
+                    _nx = 89; _ny = 91;
+                    break;
+                case '제주도':
+                    _nx = 53; _ny = 38;
+                    break;
+                default:
+                    _nx = 60; _ny = 127;
+            }
+
+            var apikey = "RfnBnJijmbqkvX1Rw0loeAkxXnTW0gC9YZbAafHB/KE+uq3lW6UTpuvqnWzAOOD/X1ZXDhga43//UWeo0aiFTw==";
+            var ForecastGribURL = "https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst";
+            ForecastGribURL += "?serviceKey=" + encodeURIComponent(apikey);
+            ForecastGribURL += "&base_date=" + formattedDate;
+            ForecastGribURL += "&base_time=" + hours + "00";
+            ForecastGribURL += "&nx=" + _nx  + "&ny=" + _ny;
+            ForecastGribURL += "&numOfRows=10";
+            ForecastGribURL += "&pageNo=1";
+            ForecastGribURL += "&dataType=JSON";
+
+
+
+            $.ajax({
+                url: ForecastGribURL,
+                type: 'GET',
+                success: function(data) {
+                    console.log("API Response:", data);
+                    if (data && data.response && data.response.body && data.response.body.items) {
+                        var items = data.response.body.items.item;
+                        console.log("Items:", items); 
+                        var rain_item = items.find(item => item.category === "RN1"); 
+                        var temperature_item = items.find(item => item.category === "T1H");
+                        var pty_item = items.find(item => item.category === "PTY"); 
+
+                        var rain = rain_item ? parseFloat(rain_item.obsrValue) : null;
+                        var temperature = temperature_item ? parseFloat(temperature_item.obsrValue) : null;
+                        var pty = pty_item ? pty_item.obsrValue : null;
+
+                        if (temperature !== null) {
+                            $('.weather-temp').html(temperature.toFixed(1) + " ℃");
+                        } else {
+                            $('.weather-temp').html("N/A");
+                        }
+
+                        if (rain !== null) {
+                            $('#RN1').html("시간당 강수량: " + rain + "mm");
+                        } else {
+                            $('#RN1').html("시간당 강수량 정보 없음");
+                        }
+
+                        if (pty !== null) {
+                            console.log("PTY Value:", pty);
+                            switch(pty) {
+                                case '0':
+                                    $('.weather-state-text').html("맑음");
+                                    break;
+                                case '1':
+                                    $('.weather-state-text').html("비");
+                                    break;
+                                case '2':
+                                    $('.weather-state-text').html("비/눈");
+                                    break;
+                                case '3':
+                                    $('.weather-state-text').html("눈");
+                                    break;
+                                case '5':
+                                    $('.weather-state-text').html("빗방울");
+                                    break;
+                                case '6':
+                                    $('.weather-state-text').html("빗방울/눈날림");
+                                    break;
+                                case '7':
+                                    $('.weather-state-text').html("눈날림");
+                                    break;
+                                default:
+                                    $('.weather-state-text').html("날씨 정보 없음");
+                            }
+                        } else {
+                            $('.weather-state-text').html("날씨 정보 없음");
+                        }
+                    } else {
+                        $('.weather-state-text').html("<p>날씨 정보를 불러오는 데 실패했습니다. 다시 시도해 주세요.</p>");
+                    }
+                },
+                error: function(error) {
+                    console.log("Error:", error);
+                    $('.weather-state-text').html("<p>날씨 정보를 불러오는 데 실패했습니다. 다시 시도해 주세요.</p>");
+                }
+            });
+        }
+
+        $(document).ready(function() {
+            var today = new Date();
+            var year = today.getFullYear();
+            var month = today.getMonth() + 1;
+            var day = today.getDate();
+
+            if (month < 10) {
+                month = '0' + month;
+            }
+            if (day < 10) {
+                day = '0' + day;
+            }
+
+            var formattedDate = year + '-' + month + '-' + day;
+            $('#date').val(formattedDate);
+        });
+
+        function moveToNextQuestion() {
+            window.location.href = '노인 인지재활 문제 이채현2.html';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>노인 인지 재활 문제</title>
+    <style>
+        * {
+            font-size: 16px;
+            font-family: Consolas, sans-serif;
+        }
+        .imgContainer {
+            display: inline-block;
+            position: relative;
+            margin-bottom: 60px;
+        }
+        img {
+            margin-right: 20px;
+            vertical-align: top;
+        }
+        .textContainer, .inputContainer {
+            position: absolute;
+            top: 105%; 
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: snow; 
+            color: black; 
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        .inputContainer {
+            display: none;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 24px;
+            text-align: center;
+            background-color: snow;
+            color: black;
+            padding: 10px;
+            border-radius: 5px;
+            display: none; 
+        }
+        .correct {
+            color: green;
+        }
+        .incorrect {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div id="question2">
+        <h3>Q2. 다음은 오늘 기억해야할 직업 사진입니다. 4가지의 직업을 확인해 보세요</h3>
+    </div>
+    <div class="imgContainer"> 
+        <img src="미용사.jpg" alt="미용사" width="300" height="300">
+        <div class="textContainer" id="text1">미용사</div>
+        <div class="inputContainer" id="input1">
+            <input type="text" placeholder="직업을 입력하세요">
+        </div>
+    </div>
+
+    <div class="imgContainer">
+        <img src="요리사.jpg" alt="요리사" width="300" height="300">
+        <div class="textContainer" id="text2">요리사</div>
+        <div class="inputContainer" id="input2">
+            <input type="text" placeholder="직업을 입력하세요">
+        </div>
+    </div>
+        
+    <div class="imgContainer">
+        <img src="군인.jpg" alt="군인" width="300" height="300">
+        <div class="textContainer" id="text3">군인</div>
+        <div class="inputContainer" id="input3">
+            <input type="text" placeholder="직업을 입력하세요">
+        </div>
+    </div>
+
+    <div class="imgContainer">
+        <img src="의사.jpg" alt="의사" width="300" height="300">
+        <div class="textContainer" id="text4">의사</div>
+        <div class="inputContainer" id="input4">
+            <input type="text" placeholder="직업을 입력하세요">
+        </div>
+    </div>
+    <button type="button" onclick="checkAnswers()">정답 확인</button>
+    <div class="result" id="result"></div>
+    <div>
+        <div>
+            <h3>출처 <a href="https://kr.freepik.com/free-photo/professional-chef-preparing-food-kitchen_32456273.htm#fromView=search&page=2&position=14&uuid=1f09b9f4-ceb9-42f3-9344-513e548108fc">Freepik</a></h3>
+            <h3>출처 <a href="https://kr.freepik.com/free-photo/patient-localizing-pain-with-doctor_5480822.htm#query=%EB%85%B8%EC%9D%B8%20%EC%9D%98%EC%82%AC&position=12&from_view=keyword&track=ais_user&uuid=806be648-d147-4c9a-b5b3-bc5995cb9044">Freepik</a></h3>
+        </div>
+        
+    </div>
+    <script>
+        function hideTextAndShowInput(containerId) {
+            document.getElementById(containerId).style.display = 'none';
+            document.getElementById('input' + containerId.substring(4)).style.display = 'block';
+        }
+
+        setTimeout(function() { hideTextAndShowInput('text1'); }, 5000);
+        setTimeout(function() { hideTextAndShowInput('text2'); }, 5000);
+        setTimeout(function() { hideTextAndShowInput('text3'); }, 5000);
+        setTimeout(function() { hideTextAndShowInput('text4'); }, 5000);
+
+        function checkAnswers() {
+            var answers = {
+                'text1': '미용사',
+                'text2': '요리사',
+                'text3': '군인',
+                'text4': '의사'
+            };
+
+            var result = document.getElementById('result');
+            var correct = true;
+
+            for (var key in answers) {
+                var userInput = document.getElementById('input' + key.substring(4)).getElementsByTagName('input')[0].value;
+                if (userInput.toLowerCase() !== answers[key].toLowerCase()) {
+                    correct = false;
+                    break;
+                }
+            }
+
+            if (correct) {
+                result.innerText = '정답입니다!';
+                result.classList.remove('incorrect')
+                result.classList.add('correct')
+            } else {
+                result.innerText = '오답입니다.';
+                result.classList.remove('correct')
+                result.classList.add('incorrect')
+            }
+
+            result.style.display = 'block'; 
+        }
+    </script>
+</body>
+</html>
