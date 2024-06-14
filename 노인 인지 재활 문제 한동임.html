@@ -96,6 +96,7 @@
         </div>
 
         <button onclick="checkAnswers()">정답 확인</button>
+        <p><button type="button" onclick="moveToNextQuestion()">다음문제</button></p>
 
         <p id="result">맞춘 정답의 수: 0</p>
     </div>
@@ -156,6 +157,9 @@
             // 결과 출력
             document.getElementById('result').textContent = `맞춘 정답의 수: ${correctCount}`;
         }
+        function moveToNextQuestion() {
+    window.location.href = '노인인지재활 문제 양승찬.html';
+}
     </script>
 </body>
 </html>
