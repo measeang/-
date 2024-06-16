@@ -23,9 +23,9 @@
             align-items: center;
         }
         img {
-            width: 150px; /* 모든 이미지의 너비를 150px로 고정 */
-            height: 150px; /* 모든 이미지의 높이를 150px로 고정 */
-            object-fit: cover; /* 이미지의 비율을 유지하면서 150x150 크기에 맞춤 */
+            width: 150px; 
+            height: 150px; 
+            object-fit: cover;
             margin-bottom: 10px;
         }
         .questions {
@@ -103,7 +103,7 @@
 
     <script>
         function checkAnswers() {
-            // 이름 맞추기 문제의 정답 설정
+            
             const itemAnswers = {
                 item1: '고무장갑',
                 item2: '카메라',
@@ -113,7 +113,7 @@
                 item6: '죽부인'
             };
 
-            // 상황에 맞는 문제의 정답 설정
+          
             const questionAnswers = {
                 answer1: '죽부인',
                 answer2: '선글라스',
@@ -121,7 +121,7 @@
                 answer4: '손톱깎이'
             };
 
-            // 사용자가 입력한 이름 맞추기 답안 가져오기
+            
             const userItemAnswers = {
                 item1: document.getElementById('item1').value.trim(),
                 item2: document.getElementById('item2').value.trim(),
@@ -131,7 +131,7 @@
                 item6: document.getElementById('item6').value.trim()
             };
 
-            // 사용자가 입력한 상황 맞추기 답안 가져오기
+            
             const userQuestionAnswers = {
                 answer1: document.getElementById('answer1').value.trim(),
                 answer2: document.getElementById('answer2').value.trim(),
@@ -139,7 +139,7 @@
                 answer4: document.getElementById('answer4').value.trim()
             };
 
-            // 맞춘 정답의 수 계산
+            
             let correctCount = 0;
 
             for (let key in itemAnswers) {
@@ -154,7 +154,7 @@
                 }
             }
 
-            // 결과 출력
+            
             document.getElementById('result').textContent = `맞춘 정답의 수: ${correctCount}`;
         }
         function moveToNextQuestion() {
